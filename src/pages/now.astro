@@ -5,11 +5,9 @@ import { formatDate } from '../utils';
 ---
 
 <Base title="Now" description="What I’m focused on right now.">
-  <h1>Now</h1>
-  <p class="muted">
-    What I’m focused on at the moment. Updated {formatDate(now.updated)}.
-  </p>
-  <ul>
+  <h1 class="page-title">Now</h1>
+  <p class="muted">What I’m focused on at the moment. Updated {formatDate(now.updated)}.</p>
+  <ul class="cursor-list narrow">
     {now.items.map((item) => <li>{item}</li>)}
   </ul>
   <p class="muted small">
@@ -19,11 +17,7 @@ import { formatDate } from '../utils';
 
 <style>
   ul {
-    padding-left: 1.1rem;
     margin: 1.5rem 0 2rem;
-  }
-  li {
-    margin-bottom: 0.5rem;
   }
   .small {
     font-size: 0.875rem;

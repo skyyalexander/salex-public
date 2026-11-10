@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import Sign from '../../components/Sign.astro';
+import Panel from '../../components/Panel.astro';
+import MenuPanel from '../../components/MenuPanel.astro';
+import LogList from '../../components/LogList.astro';
+import { aviation } from '../../site.config';
+import { getLogEntries } from '../../content';
+import { url } from '../../utils';
+
+const recent = (await getLogEntries()).slice(0, 5);
+const menu = aviation.sections.map((s) => ({ label: s.label, href: url(`/aviation/${s.slug}`) }));
+---
+
+<Base title="Aviation" description="Flight training, drone work, and time in the simulator.">
+  <Sign from="SA" to="Aviation" />
+
+  <div class="split">
+    <div class="main">
+      <p class="lede">{aviation.intro}</p>
+
+      <h2 class="label">Sections</h2>
+      <ul class="rows">
+        {aviation.sections.map((s) => (
+          <li>
+            <div>
+              <a href={url(`/aviation/${s.slug}`)}>{s.label}</a>
+              <p>{s.summary}</p>
+            </div>
+            <span class="meta chip sign">Enter →</span>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="label">Latest log entries</h2>
+      <LogList entries={recent} />
+    </div>
+    <div class="side">
+      <Panel title="Flight status" rows={aviation.status} />
+      <MenuPanel label="Aviation sections" items={menu} />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .lede {
+    font-size: 1.1rem;
+  }
+  .main :global(h2.label:first-of-type) {
+    margin-top: 1.75rem;
+  }
+</style>

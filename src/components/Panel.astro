@@ -1,0 +1,78 @@
+---
+// The amber game-menu panel. Pass `rows` for a label/value readout,
+// or put any content inside it.
+interface Props {
+  title: string;
+  meta?: string;
+  rows?: readonly { label: string; value: string }[];
+}
+const { title, meta, rows } = Astro.props;
+---
+
+<section class="panel">
+  <header>
+    <h2>{title}</h2>
+    {meta && <span>{meta}</span>}
+  </header>
+  {rows && (
+    <dl>
+      {rows.map((row) => (
+        <div>
+          <dt>{row.label}</dt>
+          <dd>{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )}
+  <slot />
+</section>
+
+<style>
+  .panel {
+    border: 1px solid var(--panel-line);
+    background: var(--panel-bg);
+    font-family: var(--font-mono);
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.5rem 0.9rem;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--panel-line);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h2 {
+    margin: 0;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    letter-spacing: inherit;
+  }
+  dl {
+    margin: 0;
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  dt {
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    text-align: right;
+  }
+</style>

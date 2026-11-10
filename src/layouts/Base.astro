@@ -1,4 +1,8 @@
 ---
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource/share-tech-mono/latin-400.css';
+import '@fontsource/chakra-petch/latin-600.css';
+import '@fontsource/press-start-2p/latin-400.css';
 import '../styles/global.css';
 import { site, nav, links } from '../site.config';
 import { url } from '../utils';
@@ -6,9 +10,11 @@ import { url } from '../utils';
 interface Props {
   title?: string;
   description?: string;
+  /** Short word shown after the name in the top bar, e.g. "ABOUT". Defaults to the title. */
+  section?: string;
 }
 
-const { title, description = site.description } = Astro.props;
+const { title, description = site.description, section = title ?? 'Home' } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : site.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
@@ -28,11 +34,20 @@ const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
+    <!-- Apply a saved light-theme choice before the page paints. -->
+    <script is:inline>
+      try {
+        if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light';
+      } catch {}
+    </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <header class="wrap site-header">
-      <a class="home" href={url('/')}>{site.name}</a>
+      <a class="brand" href={url('/')}>
+        <span class="wordmark">{site.name}</span>
+        <span class="section">// {section}</span>
+      </a>
       <nav aria-label="Main">
         {nav.map((item) => (
           <a href={url(item.href)} aria-current={current.startsWith(item.href) ? 'page' : undefined}>
@@ -40,6 +55,10 @@ const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$
           </a>
         ))}
       </nav>
+      <button type="button" class="theme-toggle" aria-label="Switch between dark and light theme">
+        <span class="to-light">Light</span>
+        <span class="to-dark">Dark</span>
+      </button>
     </header>
 
     <main id="main" class="wrap">
@@ -52,6 +71,18 @@ const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$
         {links.map((l) => <a href={l.href} rel="me noopener" target="_blank">{l.label}</a>)}
       </span>
     </footer>
+
+    <script is:inline>
+      document.querySelector('.theme-toggle').addEventListener('click', () => {
+        const root = document.documentElement;
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        if (next === 'light') root.dataset.theme = 'light';
+        else delete root.dataset.theme;
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+      });
+    </script>
   </body>
 </html>
 
@@ -71,27 +102,110 @@ const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 0.5rem 1.5rem;
-    padding-top: 2.5rem;
-    padding-bottom: 3.5rem;
+    align-items: center;
+    gap: 0.9rem 1.5rem;
+    margin-top: 1.75rem;
+    margin-bottom: 3rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--faint);
   }
-  .home {
-    font-weight: 600;
-    text-decoration: none;
-  }
-  nav {
+
+  .brand {
     display: flex;
-    gap: 1.25rem;
-    font-size: 0.95rem;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 0.75rem;
   }
-  nav a {
-    text-decoration: none;
+  .wordmark {
+    font-family: var(--font-pixel);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-shadow: 1px 1px 0 var(--pixel-shadow);
+  }
+  .section {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--muted);
   }
-  nav a:hover,
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.2rem;
+    margin-left: auto;
+    font-family: var(--font-nav);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  nav a {
+    position: relative;
+    padding: 0.35rem 0;
+  }
   nav a[aria-current='page'] {
     color: var(--fg);
+  }
+  /* The cursor sits in the gap so the menu never changes width. */
+  nav a[aria-current='page']::before {
+    content: '▸';
+    position: absolute;
+    left: -0.95em;
+    color: var(--accent);
+  }
+
+  /* On narrow screens the theme button joins the name row and the menu drops below. */
+  @media (max-width: 62rem) {
+    .site-header {
+      margin-bottom: 2.25rem;
+    }
+    .theme-toggle {
+      order: 2;
+      margin-left: auto;
+    }
+    nav {
+      order: 3;
+      flex-basis: 100%;
+      margin-left: 0;
+      gap: 0.1rem 1.25rem;
+      letter-spacing: 0.1em;
+    }
+  }
+  /* Phones: the page title already says where you are. */
+  @media (max-width: 30rem) {
+    .section {
+      display: none;
+    }
+  }
+
+  .theme-toggle {
+    min-height: 2rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--panel-line);
+    background: var(--bg);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .theme-toggle:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .to-dark {
+    display: none;
+  }
+  :global([data-theme='light']) .to-light {
+    display: none;
+  }
+  :global([data-theme='light']) .to-dark {
+    display: inline;
   }
 
   main {
@@ -106,14 +220,23 @@ const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$
     margin-top: 5rem;
     padding-top: 1.5rem;
     padding-bottom: 2.5rem;
-    font-size: 0.875rem;
+    border-top: 1px solid var(--faint);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--muted);
   }
   .footer-links {
     display: flex;
     gap: 1rem;
   }
-  .footer-links a {
-    color: inherit;
+
+  @media print {
+    .site-header,
+    .site-footer,
+    .skip {
+      display: none;
+    }
   }
 </style>

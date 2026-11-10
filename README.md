@@ -6,12 +6,23 @@ My personal site: projects, writing, résumé, and what I'm working on now. Buil
 
 | To change… | Edit |
 | --- | --- |
-| Name, tagline, nav, social links, "Now" list | `src/site.config.ts` |
-| Experience, education, certifications, skills | `src/resume.ts` |
+| Name, tagline, menu, social links, "Now" list, About stats | `src/site.config.ts` |
+| Aviation hub text, flight status, section names | `aviation` in `src/site.config.ts` |
+| Résumé: experience, education, certifications, skills | `src/resume.ts` |
 | Bio | `src/pages/about.astro` |
 | Add a project | new `.md` file in `src/content/projects/` |
 | Add a post | new `.md` file in `src/content/writing/` (`draft: true` hides it) |
-| Colors and fonts | tokens at the top of `src/styles/global.css` |
+| Add a flight or drone log entry | new `.md` file in `src/content/aviation/` (`section: pilot` or `remote-pilot`) |
+| Colors and fonts, dark and light | tokens at the top of `src/styles/global.css` |
+
+## Design
+
+- Dark by default, with a LIGHT/DARK button in the header (the choice is remembered).
+- The home page name is a chrome + script lockup; the top bar and page titles use pixel lettering.
+- `Panel` and `MenuPanel` (in `src/components/`) are the amber game-menu boxes.
+- `Sign` draws a page title as taxiway signs; it is used on the Aviation pages.
+- Fonts are self-hosted through `@fontsource` packages, so nothing loads from third parties.
+- The Resume page prints as a plain one-page black-on-white résumé.
 
 ## Running locally
 

@@ -1,0 +1,53 @@
+---
+// A page title drawn as airport taxiway signs: a black "location" sign
+// followed by a yellow "direction" sign. Used on the Aviation pages.
+import '@fontsource/rajdhani/latin-700.css';
+
+interface Props {
+  from: string;
+  fromHref?: string;
+  to: string;
+}
+const { from, fromHref, to } = Astro.props;
+---
+
+<h1 class="sign">
+  {fromHref ? <a class="location" href={fromHref}>{from}</a> : <span class="location" aria-hidden="true">{from}</span>}
+  <span class="direction">{to} <span aria-hidden="true">→</span></span>
+</h1>
+<div class="stripe" aria-hidden="true"></div>
+
+<style>
+  .sign {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    font-family: var(--font-sign);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 6vw, 2.4rem);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .location,
+  .direction {
+    padding: 0.2em 0.45em;
+    border: 3px solid var(--sign-yellow);
+  }
+  .location {
+    background: var(--sign-black);
+    color: var(--sign-yellow);
+  }
+  a.location:hover {
+    color: #ffffff;
+  }
+  .direction {
+    background: var(--sign-yellow);
+    color: var(--sign-black);
+  }
+  .stripe {
+    height: 10px;
+    margin: 1.5rem 0 2rem;
+    background: repeating-linear-gradient(-45deg, var(--sign-yellow) 0 12px, var(--sign-black) 12px 24px);
+  }
+</style>

@@ -1,4 +1,6 @@
 ---
+import '@fontsource/russo-one/latin-400.css';
+import '@fontsource/mr-dafoe/latin-400.css';
 import Base from '../layouts/Base.astro';
 import ProjectList from '../components/ProjectList.astro';
 import PostList from '../components/PostList.astro';
@@ -8,33 +10,40 @@ import { url, formatDate } from '../utils';
 
 const projects = (await getProjects()).filter((p) => p.data.featured).slice(0, 4);
 const posts = (await getPosts()).slice(0, 3);
+const [first, ...rest] = site.name.split(' ');
 ---
 
-<Base>
+<Base section="Home">
   <section class="intro">
-    <h1>{site.name}</h1>
-    <p class="tagline">{site.tagline}</p>
-    <p>
-      This is my corner of the internet: a home for the things I’m building, the work I’ve done, and the
-      ideas I’m thinking through. <a href={url('/about')}>More about me →</a>
+    <h1 class="lockup" aria-label={site.name}>
+      <span class="chrome" aria-hidden="true">{first}</span>
+      <span class="script" aria-hidden="true">{rest.join(' ')}</span>
+    </h1>
+    <p class="tagline">{site.tagline}<span class="caret" aria-hidden="true">_</span></p>
+    <p class="narrow lede">
+      This is my corner of the internet: a home for the things I’m building, the work I’ve done, and the ideas
+      I’m thinking through.
     </p>
+    <a class="more" href={url('/about')}>More about me →</a>
   </section>
 
-  <section>
-    <h2 class="label">Now <span class="updated">· {formatDate(now.updated)}</span></h2>
-    <ul class="now">
-      {now.items.map((item) => <li>{item}</li>)}
-    </ul>
-    <a class="more" href={url('/now')}>What I’m up to →</a>
-  </section>
-
-  {projects.length > 0 && (
+  <div class="columns">
     <section>
-      <h2 class="label">Projects</h2>
-      <ProjectList projects={projects} />
-      <a class="more" href={url('/projects')}>All projects →</a>
+      <h2 class="label">Now · {formatDate(now.updated)}</h2>
+      <ul class="cursor-list">
+        {now.items.slice(0, 3).map((item) => <li>{item}</li>)}
+      </ul>
+      <a class="more" href={url('/now')}>What I’m up to →</a>
     </section>
-  )}
+
+    {projects.length > 0 && (
+      <section>
+        <h2 class="label">Projects</h2>
+        <ProjectList projects={projects} />
+        <a class="more" href={url('/projects')}>All projects →</a>
+      </section>
+    )}
+  </div>
 
   {posts.length > 0 && (
     <section>
@@ -47,34 +56,70 @@ const posts = (await getPosts()).slice(0, 3);
   <section>
     <h2 class="label">Elsewhere</h2>
     <p class="elsewhere">
-      {links.map((l) => <a href={l.href} rel="me noopener" target="_blank">{l.label}</a>)}
+      {links.map((l) => <a href={l.href} rel="me noopener" target="_blank">{l.label} ↗</a>)}
     </p>
   </section>
 </Base>
 
 <style>
-  .intro h1 {
-    font-size: 2.25rem;
-    margin-bottom: 0.25rem;
-  }
-  .tagline {
-    font-size: 1.2rem;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-  }
-  .updated {
-    text-transform: none;
+  /* The chrome + script name. Sized in em so it scales as one piece. */
+  .lockup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0;
+    font-size: clamp(4.75rem, 21vw, 9.5rem);
+    font-weight: 400;
+    line-height: 1;
     letter-spacing: 0;
   }
-  .now {
-    padding-left: 1.1rem;
-    margin: 0 0 0.75rem;
+  .chrome {
+    padding-right: 0.12em;
+    font-family: var(--font-chrome);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    background: var(--chrome);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0.03em 0 var(--chrome-shadow));
+    transform: skewX(-10deg);
+    transform-origin: left bottom;
   }
-  .more {
-    display: inline-block;
-    margin-top: 0.75rem;
-    font-size: 0.95rem;
-    color: var(--muted);
+  .script {
+    margin: -0.3em 0 0 1.25em;
+    font-family: var(--font-script);
+    font-size: 0.66em;
+    color: var(--script);
+    text-shadow:
+      0 0 0.2em var(--script-glow),
+      0.035em 0.035em 0 var(--script-edge);
+    transform: rotate(-7deg);
+  }
+
+  .tagline {
+    margin: 1.75rem 0 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .caret {
+    margin-left: 0.3em;
+    animation: blink 1.1s steps(1) infinite;
+  }
+  .lede {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 0 3.5rem;
+    margin-top: 1rem;
   }
   .elsewhere {
     display: flex;

@@ -1,0 +1,208 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, links } from '../site.config';
+import { profile, experience, education, certifications, skills } from '../resume';
+
+const linkedin = links.find((l) => l.label === 'LinkedIn');
+---
+
+<Base title="Resume" description={`Résumé of ${site.name}: experience, education, certifications, and skills.`}>
+  <div class="top">
+    <h1 class="page-title">Resume</h1>
+    <button type="button" class="print" onclick="window.print()">Print / Save PDF</button>
+  </div>
+
+  <article class="resume">
+    <header class="print-only">
+      <p class="print-name">{site.name}</p>
+      <p>{site.location}{linkedin && ` · ${linkedin.href.replace('https://www.', '')}`}</p>
+    </header>
+
+    <p class="narrow">{profile}</p>
+
+    <h2 class="label">Experience</h2>
+    {experience.map((job) => (
+      <section class="job">
+        <div class="job-head">
+          <h3>{job.role} · <span class="org">{job.org}</span></h3>
+          <span class="label">{job.dates}</span>
+        </div>
+        <p class="place muted">{job.place}</p>
+        <ul>
+          {job.points.map((point) => <li>{point}</li>)}
+        </ul>
+      </section>
+    ))}
+
+    <h2 class="label">Education</h2>
+    <ul class="rows">
+      {education.map((e) => (
+        <li>
+          <div>{e.title} · <span class="muted">{e.org}</span></div>
+          <span class="meta label">{e.year}</span>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="label">Certifications</h2>
+    <ul class="rows">
+      {certifications.map((c) => <li>{c}</li>)}
+    </ul>
+
+    <h2 class="label">Skills</h2>
+    <dl class="skills">
+      {Object.entries(skills).map(([group, items]) => (
+        <>
+          <dt class="label">{group}</dt>
+          <dd>{items.join(' · ')}</dd>
+        </>
+      ))}
+    </dl>
+  </article>
+</Base>
+
+<style>
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem 1rem;
+  }
+  .print {
+    min-height: 2rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--panel-line);
+    background: var(--bg);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .print:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .print-only {
+    display: none;
+  }
+
+  .job {
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--faint);
+  }
+  .job-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+  }
+  .job h3 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+  .org {
+    font-weight: 400;
+  }
+  .place {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .job ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.1rem;
+    max-width: 44rem;
+    font-size: 0.975rem;
+  }
+  .job li {
+    margin-bottom: 0.25rem;
+  }
+
+  .skills {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+  }
+  .skills dt {
+    padding-top: 0.3rem;
+  }
+  .skills dd {
+    margin: 0;
+  }
+  @media (max-width: 30rem) {
+    .skills {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+    .skills dd {
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  /* Printing gives a plain one-page black-on-white résumé, whatever theme is on screen. */
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.5in;
+    }
+    :global(:root),
+    :global(:root[data-theme='light']) {
+      --bg: #ffffff;
+      --fg: #000000;
+      --muted: #333333;
+      --faint: #bbbbbb;
+      --accent: #000000;
+    }
+    /* Everything is sized in rem, so this scales the whole page to fit one sheet. */
+    :global(html) {
+      font-size: 72%;
+    }
+    :global(body) {
+      line-height: 1.35;
+    }
+    :global(main) {
+      min-height: 0;
+      max-width: none;
+      padding: 0;
+    }
+    .top {
+      display: none;
+    }
+    .print-only {
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+    .print-only p {
+      margin: 0;
+    }
+    .print-name {
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+    .narrow {
+      max-width: none;
+      margin-bottom: 0;
+    }
+    .job {
+      break-inside: avoid;
+      padding: 0.4rem 0;
+    }
+    .job ul {
+      max-width: none;
+      margin-top: 0.2rem;
+    }
+    .job li {
+      margin-bottom: 0;
+    }
+    .resume :global(h2.label) {
+      margin: 0.9rem 0 0.3rem;
+    }
+    .resume :global(.rows li) {
+      padding: 0.3rem 0;
+    }
+  }
+</style>

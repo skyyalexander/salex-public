@@ -14,8 +14,8 @@ const { Content } = await render(project);
 const { title, description, status, year, link, repo, tags } = project.data;
 ---
 
-<Base title={title} description={description}>
-  <a class="back muted" href={url('/projects')}>← Projects</a>
+<Base title={title} description={description} section="Projects">
+  <a class="back" href={url('/projects')}>← Projects</a>
   <h1>{title}</h1>
   <p class="lede muted">{description}</p>
   <p class="meta label">

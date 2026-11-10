@@ -15,7 +15,7 @@ const { projects } = Astro.props;
         <a href={url(`/projects/${p.id}`)}>{p.data.title}</a>
         <p>{p.data.description}</p>
       </div>
-      <span class="meta label">{p.data.status}</span>
+      <span class="meta chip">{p.data.status}</span>
     </li>
   ))}
 </ul>

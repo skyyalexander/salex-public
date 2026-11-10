@@ -29,4 +29,17 @@ const writing = defineCollection({
   }),
 });
 
-export const collections = { projects, writing };
+// Add a flight or drone log entry: drop a Markdown file into src/content/aviation/.
+// `section` decides which half of the Aviation hub it appears under.
+const aviation = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/aviation' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    section: z.enum(['pilot', 'remote-pilot']),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { projects, writing, aviation };

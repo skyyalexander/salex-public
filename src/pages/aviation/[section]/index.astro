@@ -1,0 +1,56 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Sign from '../../../components/Sign.astro';
+import MenuPanel from '../../../components/MenuPanel.astro';
+import LogList from '../../../components/LogList.astro';
+import { aviation } from '../../../site.config';
+import { getLogEntries } from '../../../content';
+import { url } from '../../../utils';
+
+export function getStaticPaths() {
+  return aviation.sections.map((section) => ({ params: { section: section.slug }, props: { section } }));
+}
+
+const { section } = Astro.props;
+const entries = await getLogEntries(section.slug);
+const menu = aviation.sections.map((s) => ({
+  label: s.label,
+  href: url(`/aviation/${s.slug}`),
+  current: s.slug === section.slug,
+}));
+---
+
+<Base title={section.label} description={section.summary} section="Aviation">
+  <Sign from="Aviation" fromHref={url('/aviation')} to={section.label} />
+
+  <div class="split">
+    <div class="main">
+      <p class="lede">{section.intro}</p>
+
+      <h2 class="label">On record</h2>
+      <ul class="rows">
+        {section.facts.map((fact) => (
+          <li>
+            <div>{fact.title}</div>
+            <span class="meta chip sign">{fact.tag}</span>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="label">Log</h2>
+      <LogList entries={entries} />
+    </div>
+    <div class="side">
+      <MenuPanel label="Aviation sections" items={menu} />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .lede {
+    font-size: 1.1rem;
+  }
+  .main :global(h2.label:first-of-type) {
+    margin-top: 1.75rem;
+  }
+</style>

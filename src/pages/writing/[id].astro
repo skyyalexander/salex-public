@@ -13,8 +13,8 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<Base title={post.data.title} description={post.data.description}>
-  <a class="back muted" href={url('/writing')}>← Writing</a>
+<Base title={post.data.title} description={post.data.description} section="Writing">
+  <a class="back" href={url('/writing')}>← Writing</a>
   <article class="prose">
     <h1>{post.data.title}</h1>
     <time class="label" datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>

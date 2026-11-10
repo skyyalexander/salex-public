@@ -1,0 +1,64 @@
+---
+// A SELECT-style game menu: a list of links with a cursor on the
+// current item, and a highlighted row on hover or keyboard focus.
+interface Props {
+  title?: string;
+  label: string;
+  items: { label: string; href: string; current?: boolean }[];
+}
+const { title = 'Select', label, items } = Astro.props;
+---
+
+<nav class="menu" aria-label={label}>
+  <div class="title">{title}</div>
+  {items.map((item) => (
+    <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+      <span class="cursor" aria-hidden="true">▸</span>
+      {item.label}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .menu {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--panel-line);
+    background: var(--panel-bg);
+    font-family: var(--font-mono);
+  }
+  .title {
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid var(--panel-line);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  a {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: none;
+  }
+  .cursor {
+    visibility: hidden;
+  }
+  a[aria-current='page'] .cursor {
+    visibility: visible;
+  }
+  a:hover,
+  a:focus-visible {
+    background: var(--accent);
+    color: var(--bg);
+    outline: none;
+  }
+  a:hover .cursor,
+  a:focus-visible .cursor {
+    visibility: visible;
+    animation: blink 1s steps(1) infinite;
+  }
+</style>

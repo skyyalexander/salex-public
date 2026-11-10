@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url, formatDate } from '../utils';
+
+interface Props {
+  entries: CollectionEntry<'aviation'>[];
+}
+const { entries } = Astro.props;
+---
+
+{entries.length > 0 ? (
+  <ul class="rows">
+    {entries.map((entry) => (
+      <li>
+        <div>
+          <a href={url(`/aviation/${entry.data.section}/${entry.id}`)}>{entry.data.title}</a>
+          <p>{entry.data.description}</p>
+        </div>
+        <time class="meta label" datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+      </li>
+    ))}
+  </ul>
+) : (
+  <p class="muted">Nothing logged yet.</p>
+)}
