@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, links } from '../site.config';
+import { experience, education, certifications, skills, resumePdf } from '../resume';
+import { url } from '../utils';
+---
+
+<Base title="About" description={`About ${site.name}: experience, education, and how to get in touch.`}>
+  <h1>About</h1>
+
+  <!-- First draft written from the résumé. Rewrite it in your own voice. -->
+  <p>
+    Hi, I’m Skyy. I’m based in Columbus, Ohio, and I’ve taken a non-traditional path: the Army, warehouses
+    and e-commerce, policy research, teaching people to fly a 737 simulator, and now training AI models.
+  </p>
+  <p>
+    The common thread is figuring out how complicated things work and explaining them clearly, whether that’s a
+    flight procedure, a policy brief, or why a language model got an answer wrong. I like solving messy problems,
+    paying attention to details, and bringing teams together around them.
+  </p>
+  <p>
+    I just finished my A.A. in International Studies, I’m working toward my private pilot certificate, and I’m
+    always building something. This site is where I keep track of all of it.
+  </p>
+
+  <h2 class="label">Experience</h2>
+  <ul class="rows">
+    {experience.map((job) => (
+      <li>
+        <div>
+          <strong>{job.role}</strong> · {job.org}
+          {job.summary && <p>{job.summary}</p>}
+        </div>
+        <span class="meta label">{job.start === job.end ? job.start : `${job.start}–${job.end ?? 'Now'}`}</span>
+      </li>
+    ))}
+  </ul>
+
+  <h2 class="label">Education</h2>
+  <ul class="rows">
+    {education.map((e) => (
+      <li>
+        <div><strong>{e.title}</strong> · {e.org}</div>
+        <span class="meta label">{e.year}</span>
+      </li>
+    ))}
+  </ul>
+
+  <h2 class="label">Certifications</h2>
+  <ul class="rows">
+    {certifications.map((c) => <li>{c}</li>)}
+  </ul>
+
+  <h2 class="label">Skills</h2>
+  <dl class="skills">
+    {Object.entries(skills).map(([group, items]) => (
+      <>
+        <dt class="label">{group}</dt>
+        <dd>{items.join(' · ')}</dd>
+      </>
+    ))}
+  </dl>
+
+  <p class="resume-links">
+    {resumePdf && <a href={url(resumePdf)}>Résumé (PDF)</a>}
+    {links.filter((l) => l.label === 'LinkedIn').map((l) => (
+      <a href={l.href} target="_blank" rel="noopener">More on LinkedIn →</a>
+    ))}
+  </p>
+
+  <h2 class="label">Get in touch</h2>
+  <p>
+    The best way to reach me is{' '}
+    {links.map((l, i) => (
+      <>{i > 0 && (i === links.length - 1 ? ' or ' : ', ')}<a href={l.href} target="_blank" rel="noopener">{l.label}</a></>
+    ))}.
+  </p>
+</Base>
+
+<style>
+  .skills {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+  }
+  .skills dt {
+    padding-top: 0.2rem;
+  }
+  .skills dd {
+    margin: 0;
+  }
+  @media (max-width: 30rem) {
+    .skills {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+    .skills dd {
+      margin-bottom: 0.75rem;
+    }
+  }
+  .resume-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+  }
+</style>

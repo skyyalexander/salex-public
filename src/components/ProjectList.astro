@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../utils';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+const { projects } = Astro.props;
+---
+
+<ul class="rows">
+  {projects.map((p) => (
+    <li>
+      <div>
+        <a href={url(`/projects/${p.id}`)}>{p.data.title}</a>
+        <p>{p.data.description}</p>
+      </div>
+      <span class="meta label">{p.data.status}</span>
+    </li>
+  ))}
+</ul>

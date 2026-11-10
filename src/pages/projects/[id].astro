@@ -1,0 +1,59 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getProjects } from '../../content';
+import { url } from '../../utils';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, description, status, year, link, repo, tags } = project.data;
+---
+
+<Base title={title} description={description}>
+  <a class="back muted" href={url('/projects')}>← Projects</a>
+  <h1>{title}</h1>
+  <p class="lede muted">{description}</p>
+  <p class="meta label">
+    <span>{status}</span>
+    <span>{year}</span>
+    {tags.map((t) => <span>{t}</span>)}
+  </p>
+  {(link || repo) && (
+    <p class="actions">
+      {link && <a href={link} target="_blank" rel="noopener">Visit →</a>}
+      {repo && <a href={repo} target="_blank" rel="noopener">Source →</a>}
+    </p>
+  )}
+  <article class="prose">
+    <Content />
+  </article>
+</Base>
+
+<style>
+  .back {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+  .lede {
+    font-size: 1.15rem;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+  }
+  .actions {
+    display: flex;
+    gap: 1.25rem;
+  }
+  .prose {
+    margin-top: 2rem;
+  }
+</style>
